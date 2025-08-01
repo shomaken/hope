@@ -351,8 +351,8 @@
                     document.getElementById('volume').textContent = formatCurrency(volume24h);
                     document.getElementById('volume').classList.remove('loading');
                     
-                    // Calculate and update donation amount (1% of 24h volume)
-                    const donationAmount = volume24h * 0.01;
+                    // Calculate and update donation amount (0.79% of 24h volume)
+                    const donationAmount = volume24h * 0.0079;
                     document.getElementById('donation-amount').textContent = formatCurrency(donationAmount);
                     document.getElementById('donation-amount').classList.remove('loading');
                 } else {

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$HOPE - Supporting Children Cancer Center of Lebanon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            padding: 40px 32px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .mission {
+            font-size: 0.95rem;
+            color: #6b7280;
+            line-height: 1.5;
+            margin: 0 auto;
+        }
+
+        /* Live Data Section */
+        .live-data {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 16px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .data-label {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .price { color: #10b981; }
+        .market-cap { color: #3b82f6; }
+        .volume { color: #8b5cf6; }
+
+        /* Donation Tracker */
+        .donation-tracker {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            padding: 20px 24px;
+            border-radius: 16px;
+            margin: 24px 0;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .donation-tracker:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
+        }
+
+        .donation-label {
+            font-size: 0.9rem;
+            color: #dc2626;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .donation-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #991b1b;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .btn {
+            flex: 1;
+            display: inline-block;
+            padding: 12px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-buy {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-community {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-buy:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-community:hover {
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0px);
+        }
+
+        /* Loading State */
+        .loading {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 32px 24px;
+            }
+
+            .live-data {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .logo {
+                width: 100px;
+            }
+
+            .tagline {
+                font-size: 1rem;
+            }
+
+            .mission {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 20px;
+            }
+
+            .logo {
+                width: 80px;
+            }
+
+            .data-value {
+                font-size: 1rem;
+            }
+
+            .donation-amount {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="logo.png" alt="$HOPE Logo" class="logo">
+            <p class="tagline">✨ A Token of Hope for Children ✨</p>
+            <p class="mission">Supporting the Children Cancer Center of Lebanon with every transaction. Together, we bring hope to young fighters and their families. 💙</p>
+        </header>
+
+        <section class="live-data">
+            <div class="data-card">
+                <div class="data-label">Price</div>
+                <div class="data-value price loading" id="price">Loading...</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">Market Cap</div>
+                <div class="data-value market-cap loading" id="market-cap">Loading...</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">24h Volume</div>
+                <div class="data-value volume loading" id="volume">Loading...</div>
+            </div>
+        </section>
+
+        <div class="donation-tracker">
+            <div class="donation-label">Funds Raised for CCCL</div>
+            <div class="donation-amount loading" id="donation-amount">Loading...</div>
+        </div>
+
+        <div class="buttons">
+            <a href="https://dexscreener.com/solana/d6wbqnggcwdnngzbdnjfh2rjzpeqazeqkzoj4cicpjcp" class="btn btn-buy" target="_blank">
+                Buy $HOPE
+            </a>
+            <a href="https://x.com/i/communities/1951384431601598665" class="btn btn-community" target="_blank">
+                Join Community
+            </a>
+        </div>
+    </div>
+
+    <script>
+
+        // Format number with commas and appropriate units
+        function formatNumber(num) {
+            if (num >= 1e9) {
+                return (num / 1e9).toFixed(2) + 'B';
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(2) + 'M';
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(2) + 'K';
+            } else {
+                return num.toFixed(2);
+            }
+        }
+
+        // Format currency
+        function formatCurrency(num) {
+            return '$' + formatNumber(num);
+        }
+
+        // Fetch live data from Dexscreener API
+        async function fetchLiveData() {
+            const contractAddress = '3ofiPaQdD6GcspNXSk6xQqB1wzEtJALikfcSmeqqBAGS';
+            
+            try {
+                const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${contractAddress}`);
+                const data = await response.json();
+                
+                if (data && data.pairs && data.pairs.length > 0) {
+                    const pair = data.pairs[0]; // Get the first (most liquid) pair
+                    
+                    // Update price
+                    const price = parseFloat(pair.priceUsd) || 0;
+                    document.getElementById('price').textContent = '$' + price.toFixed(6);
+                    document.getElementById('price').classList.remove('loading');
+                    
+                    // Update market cap
+                    const marketCap = parseFloat(pair.fdv) || 0;
+                    document.getElementById('market-cap').textContent = formatCurrency(marketCap);
+                    document.getElementById('market-cap').classList.remove('loading');
+                    
+                    // Update volume
+                    const volume24h = parseFloat(pair.volume.h24) || 0;
+                    document.getElementById('volume').textContent = formatCurrency(volume24h);
+                    document.getElementById('volume').classList.remove('loading');
+                    
+                    // Calculate and update donation amount (1% of 24h volume)
+                    const donationAmount = volume24h * 0.01;
+                    document.getElementById('donation-amount').textContent = formatCurrency(donationAmount);
+                    document.getElementById('donation-amount').classList.remove('loading');
+                } else {
+                    throw new Error('No pair data found');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                
+                // Show error state
+                document.getElementById('price').textContent = 'Error';
+                document.getElementById('market-cap').textContent = 'Error';
+                document.getElementById('volume').textContent = 'Error';
+                document.getElementById('donation-amount').textContent = 'Error';
+                
+                // Remove loading class
+                document.getElementById('price').classList.remove('loading');
+                document.getElementById('market-cap').classList.remove('loading');
+                document.getElementById('volume').classList.remove('loading');
+                document.getElementById('donation-amount').classList.remove('loading');
+            }
+        }
+
+        // Initial data fetch
+        fetchLiveData();
+
+        // Update data every 30 seconds
+        setInterval(fetchLiveData, 30000);
+    </script>
+</body>
+</html>

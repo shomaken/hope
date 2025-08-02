@@ -130,8 +130,7 @@ function App() {
          // Update market cap (from highest volume pair)
          const marketCap = parseFloat(bestPair.fdv || bestPair.marketCap) || 0;
          
-         // Use TOTAL COMBINED VOLUME
-         const volume24h = totalVolume24h;
+                   // Use TOTAL COMBINED VOLUME (removed unused variable)
          
          
         
@@ -206,7 +205,7 @@ function App() {
     const interval = setInterval(fetchLiveData, 60000); // Update every 1 minute
     
     return () => clearInterval(interval);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleKeyPress = (event) => {

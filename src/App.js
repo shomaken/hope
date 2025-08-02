@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 function App() {
      const [data, setData] = useState({
@@ -26,7 +26,7 @@ function App() {
 
 
 
-  const fetchLiveData = async () => {
+  const fetchLiveData = useCallback(async () => {
     setApiCallCount(prev => prev + 1);
     
     try {
@@ -89,29 +89,23 @@ function App() {
              if (dexData && dexData.pairs && dexData.pairs.length > 0) {
          console.log(`📊 Found ${dexData.pairs.length} trading pairs`);
          
-         // Calculate TOTAL COMBINED VOLUME from ALL pairs
-         let totalVolume24h = 0;
-         let volumeBreakdown = [];
-         
-         dexData.pairs.forEach((pair, index) => {
-           let pairVolume = 0;
-           if (pair.volume && pair.volume.h24) {
-             pairVolume = parseFloat(pair.volume.h24);
-           } else if (pair.volume24h) {
-             pairVolume = parseFloat(pair.volume24h);
-           } else if (pair.volumeUsd24h) {
-             pairVolume = parseFloat(pair.volumeUsd24h);
-           }
-           
-           totalVolume24h += pairVolume;
-           volumeBreakdown.push({
-             dex: pair.dexId,
-             volume: pairVolume,
-             pair: pair.pairAddress
-           });
-           
-           console.log(`Pair ${index}: ${pair.dexId} - $${pairVolume.toLocaleString()}`);
-         });
+                   // Calculate TOTAL COMBINED VOLUME from ALL pairs
+          let totalVolume24h = 0;
+          
+          dexData.pairs.forEach((pair, index) => {
+            let pairVolume = 0;
+            if (pair.volume && pair.volume.h24) {
+              pairVolume = parseFloat(pair.volume.h24);
+            } else if (pair.volume24h) {
+              pairVolume = parseFloat(pair.volume24h);
+            } else if (pair.volumeUsd24h) {
+              pairVolume = parseFloat(pair.volumeUsd24h);
+            }
+            
+            totalVolume24h += pairVolume;
+            
+            console.log(`Pair ${index}: ${pair.dexId} - $${pairVolume.toLocaleString()}`);
+          });
          
                    console.log('💯 TOTAL COMBINED VOLUME:', totalVolume24h);
           
@@ -198,14 +192,14 @@ function App() {
       
       setIsLoading(false);
     }
-  };
+  }, [apiCallCount, lastSuccessfulData]);
 
   useEffect(() => {
     fetchLiveData();
     const interval = setInterval(fetchLiveData, 60000); // Update every 1 minute
     
     return () => clearInterval(interval);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchLiveData]);
 
   useEffect(() => {
     const handleKeyPress = (event) => {

@@ -18,6 +18,9 @@ function App() {
 
   const contractAddress = '3ofiPaQdD6GcspNXSk6xQqB1wzEtJALikfcSmeqqBAGS';
   const walletAddress = 'HgumbJ177nwwbSXApgXdv6vZQeW1pwehQbjzqdNRwDTy';
+  
+  // Detect mobile device for performance optimization
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const formatCurrency = (value) => {
     if (typeof value !== 'number' || isNaN(value)) return 'N/A';
@@ -32,59 +35,22 @@ function App() {
     try {
       console.log(`API Call #${apiCallCount + 1} - Fetching data...`);
       
-             // Fetch Dexscreener data (public API, no key required)
-       const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${contractAddress}`, {
-         headers: {
-           'Accept': 'application/json'
-         }
-       });
+      // Fetch Dexscreener data (public API, no key required)
+      const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${contractAddress}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-             const dexData = await response.json();
-       console.log('Dexscreener API Response:', dexData);
+      const dexData = await response.json();
+      console.log('Dexscreener API Response:', dexData);
       
-      // Fetch wallet balance from Solana RPC
+      // Simplified wallet balance fetch (removed for mobile performance)
       let walletBalance = 0;
-      try {
-        const solanaResponse = await fetch('https://api.mainnet-beta.solana.com', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'getBalance',
-            params: [walletAddress]
-          })
-        });
-        
-        if (solanaResponse.ok) {
-          const solanaData = await solanaResponse.json();
-          const balanceInLamports = solanaData.result?.value || 0;
-          const balanceInSOL = balanceInLamports / 1000000000; // Convert lamports to SOL
-          
-          // Fetch live SOL price for accurate USD conversion
-          let solPrice = 100; // Default fallback
-          try {
-            const solPriceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
-            if (solPriceResponse.ok) {
-              const solPriceData = await solPriceResponse.json();
-              solPrice = solPriceData.solana?.usd || 100;
-            }
-          } catch (solError) {
-            console.log('⚠️ Could not fetch SOL price:', solError.message);
-          }
-          
-          walletBalance = balanceInSOL * solPrice;
-          console.log('💰 WALLET BALANCE:', walletBalance, 'USD');
-        }
-      } catch (walletError) {
-        console.log('⚠️ Could not fetch wallet balance:', walletError.message);
-      }
       
              if (dexData && dexData.pairs && dexData.pairs.length > 0) {
          console.log(`📊 Found ${dexData.pairs.length} trading pairs`);
@@ -171,15 +137,15 @@ function App() {
       console.error('Error fetching data:', error);
       setIsAPIHealthy(false);
       
-      // If we have recent successful data, use it with a warning
-      if (lastSuccessfulData && (Date.now() - lastSuccessfulData.timestamp) < 60000) {
-        console.log('Using cached data due to API error');
-                         setData({
-          price: '$' + lastSuccessfulData.price.toFixed(8) + ' (cached)',
-          marketCap: formatCurrency(lastSuccessfulData.marketCap) + ' (cached)',
-          volume: formatCurrency(lastSuccessfulData.volume24h) + ' (cached)',
-          donationAmount: formatCurrency(lastSuccessfulData.donationAmount) + ' (cached)'
-        });
+             // If we have recent successful data, use it with a warning
+       if (lastSuccessfulData && (Date.now() - lastSuccessfulData.timestamp) < 300000) { // 5 minutes cache
+         console.log('Using cached data due to API error');
+         setData({
+           price: '$' + lastSuccessfulData.price.toFixed(8),
+           marketCap: formatCurrency(lastSuccessfulData.marketCap),
+           volume: formatCurrency(lastSuccessfulData.volume24h),
+           donationAmount: formatCurrency(lastSuccessfulData.donationAmount)
+         });
       } else {
         // Show error state
                  setData({
@@ -192,14 +158,15 @@ function App() {
       
       setIsLoading(false);
     }
-  }, [apiCallCount, lastSuccessfulData]);
+  }, [contractAddress, apiCallCount, lastSuccessfulData]);
 
   useEffect(() => {
     fetchLiveData();
-    const interval = setInterval(fetchLiveData, 60000); // Update every 1 minute
+    const updateInterval = isMobile ? 600000 : 300000; // 10 minutes on mobile, 5 minutes on desktop
+    const interval = setInterval(fetchLiveData, updateInterval);
     
     return () => clearInterval(interval);
-  }, [fetchLiveData]);
+  }, [fetchLiveData, isMobile]);
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -290,7 +257,7 @@ function App() {
          <div><strong>📊 Source:</strong> {debugData.donationSource || 'calculated'}</div>
 
         <div><strong>💼 Wallet Balance:</strong> {walletAddress}</div>
-        <div><strong>⏰ Update Frequency:</strong> Every 1 minute</div>
+                 <div><strong>⏰ Update Frequency:</strong> {isMobile ? 'Every 10 minutes (mobile)' : 'Every 5 minutes (desktop)'}</div>
         <div><strong>🕒 Last Update:</strong> {debugData.timestamp ? new Date(debugData.timestamp).toLocaleTimeString() : 'N/A'}</div>
         </div>
       )}
